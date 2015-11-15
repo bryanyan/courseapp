@@ -1,1 +1,42 @@
 {% extends base.html %}
+
+{% block body %}
+<div class="container-fluid">
+	<div class="search-content">
+        <div class="title">
+            <h1> CMU Courses </h1>
+        </div>
+    </div>
+    <div class="description">
+        <p class="text-center">CMU Courses provides information about courses at Carnegie Mellon including descriptions, pre/coreqs, and course evaluations.</p>
+    </div>
+    <div class="search">
+        <div class="row">
+            <div class="col-xs-3"> </div>
+            <div class="col-xs-6">
+                <div id="custom-search-input">
+                    <div class="input-group col-md-12">
+                        <input type="text" class="form-control input-lg" placeholder="15-214"> </input>
+                        <span class="input-group-btn">
+                            <button class="btn btn-info btn-lg" type="button">
+                                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+			</div>
+		</div>
+    </div>
+
+    <div class="about">
+        <div class="row">
+            <div class="col-xs-2"> </div>
+            <div class="col-xs-8">
+                <p class="text-center">CMU Courses was built to showcase the <a href="https://scottylabs.org/course-api/"> ScottyLabs Course-API </a>. This application is built on Tornado, a Python web framework and asynchronous networking library as well as Bootstrap. The source code for this application can be found <a href="https://github.com/bryanyan/courseapp"> here. </a> </p>
+                <p class="text-center"> If there are any bugs or suggestions you would like to make, please contact <a> bryanyan@andrew.cmu.edu </a> </p>
+            </div>
+        </div> 
+    </div>
+
+</div>
+{% end %}

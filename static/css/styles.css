@@ -5,6 +5,7 @@ html {
 
 body {
   min-height: 500px;
+  padding-top: 50px;
 }
 
 .footer {
@@ -18,3 +19,20 @@ body {
 .text-muted {
   margin: 15px 0px;
 }
+
+.search-content {
+	margin-top: 75px;
+}
+
+h1 {
+	text-align: center;
+}
+
+.title, .description, .search {
+  padding: 10px;
+}
+
+.about {
+  padding-top: 50px;
+}
+
