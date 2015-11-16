@@ -1,0 +1,19 @@
+{% extends base.html %}
+{% autoescape None %}
+
+{% block body %}
+
+<div class="container-fluid">
+	<div class="content">
+        <div class="title">
+            <h1> Computer Science Courses </h1>
+        </div>
+    </div>
+
+    {% for course in courses %}
+    	{{ modules.Course(course) }}
+    {% end %}
+
+</div>
+
+{% end %}
