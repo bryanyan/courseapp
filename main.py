@@ -16,7 +16,13 @@ def getCourses():
 		data = json.load(dataFile)
 	return data['courses']
 
+def getFCEs():
+	with open('static/courses.json') as dataFile:
+		data = json.load(dataFile)
+	return data['fces']
+
 data = getCourses()
+fce = getFCEs()
 
 class Application(tornado.web.Application):
 
@@ -51,7 +57,25 @@ class SCSHandler(tornado.web.RequestHandler):
 		scsCoursesSorted = sorted(scsCoursesList,key=lambda x: x[0])
 		return scsCoursesSorted
 
+	def getSCSFCEs(self):
+		scsFCEs = {}
+		for i in range(1, len(fce)):
+			courseID = str(fce[i]["Course ID"])
+			if courseID == "": continue
+			elif "FA14-" in courseID:
+				courseID = courseID.strip("FA14")
+				courseID = courseID.strip("-")
+			elif "F13-" in courseID: 
+				courseID = courseID.strip("F13")
+				courseID = courseID.strip("-")
+			if courseID in scsFCEs:
+				pass
+			else:
+				scsFCEs[courseID] = []
+		return scsFCEs
+
 	def get(self):
+		pprint.pprint(self.getSCSFCEs())
 		self.render('scs.html', courses=self.getSCSCourses())
 
 #class DCHandler(tornado.web.RequestHandler):
@@ -74,6 +98,8 @@ class CourseModule(tornado.web.UIModule):
 	def render(self, course):
 		return self.render_string("modules/courses.html", course=course)
 
+	def embedded_css(self):
+		return ".course {margin-bottom: 15px}"
 
 if __name__ == '__main__':
 	tornado.options.parse_command_line()
