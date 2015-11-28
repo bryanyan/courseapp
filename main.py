@@ -1,7 +1,7 @@
 import os.path
 import io
 import json
-import pprint
+from pprint import pprint
 
 import tornado.httpserver
 import tornado.ioloop
@@ -28,7 +28,8 @@ class Application(tornado.web.Application):
 
 	def __init__(self):
 		handlers = [(r'/', IndexHandler),
-					(r'/scs', SCSHandler)]
+					(r'/scs', SCSHandler),
+					(r'/([0-9][0-9][0-9][0-9][0-9])', FCEHandler)]
 		settings = dict(template_path=os.path.join(os.path.dirname(__file__), "templates"),
 						static_path=os.path.join(os.path.dirname(__file__), "static"),
 						ui_modules={"Course": CourseModule},
@@ -57,10 +58,39 @@ class SCSHandler(tornado.web.RequestHandler):
 		scsCoursesSorted = sorted(scsCoursesList,key=lambda x: x[0])
 		return scsCoursesSorted
 
-	def getSCSFCEs(self):
-		scsFCEs = {}
-		for i in range(1, len(fce)):
+	#def getSCSFCEs(self):
+	#	scsFCEs = {}
+	#	for i in range(1, len(fce)):
+	#		courseID = str(fce[i]["Course ID"])
+	#		department = str(fce[i]["Dept"])
+	#		year = fce[i]["Year"]
+	#		if department != "CS": continue
+	#		if year < 2011: continue
+	#		if courseID == "": continue
+	#		elif "FA14-" in courseID:
+	#			courseID = courseID.strip("FA14")
+	#			courseID = courseID.strip("-")
+	#		elif "F13-" in courseID: 
+	#			courseID = courseID.strip("F13")
+	#			courseID = courseID.strip("-")
+	#		if courseID in scsFCEs:
+	#			pass
+	#		else:
+	#			scsFCEs[courseID] = []
+	#	return scsFCEs
+
+	def get(self):
+		courses = self.getSCSCourses()
+		self.render('scs.html', courses=courses)
+
+class FCEHandler(tornado.web.RequestHandler):
+
+	def getFCEs(self):
+		fces = {}
+		for i in xrange(1, len(fce)):
 			courseID = str(fce[i]["Course ID"])
+			year = fce[i]["Year"]
+			if year < 2011: continue
 			if courseID == "": continue
 			elif "FA14-" in courseID:
 				courseID = courseID.strip("FA14")
@@ -68,15 +98,31 @@ class SCSHandler(tornado.web.RequestHandler):
 			elif "F13-" in courseID: 
 				courseID = courseID.strip("F13")
 				courseID = courseID.strip("-")
-			if courseID in scsFCEs:
-				pass
+			if courseID in fces:
+				fces[courseID].append(fce[i])
 			else:
-				scsFCEs[courseID] = []
-		return scsFCEs
+				fces[courseID] = []
+		return fces
 
-	def get(self):
-		pprint.pprint(self.getSCSFCEs())
-		self.render('scs.html', courses=self.getSCSCourses())
+
+	def parseFCEs(self, course):
+		fces = self.getFCEs()
+		calculated = {"Hours Per Week": 0, "Feedback to Students": 0, "Explains Subject Matter": 0, "Overall Teaching": 0, 
+					  "Overall Course": 0, "Responses": 0}
+		courseFCEs = fces[course]
+		for i in xrange(len(courseFCEs)):
+			#calculated["Hours Per Week"] += courseFCEs[i]["Questions"]['1: Hrs Per Week 9']
+			calculated["Feedback to Students"] += courseFCEs[i]["Questions"]["5: Feedback to students"]
+			calculated["Explains Subject Matter"] += courseFCEs[i]["Questions"]["7: Explains subject matter"]
+			calculated["Overall Teaching"] += courseFCEs[i]["Questions"]["9: Overall teaching"]
+			calculated["Overall Course"] += courseFCEs[i]["Questions"]["10: Overall course"]
+			calculated["Responses"] += courseFCEs[i]["Responses"]
+		return calculated
+
+
+	def get(self, course):
+		fces = self.parseFCEs(course)
+		self.write(fces)
 
 #class DCHandler(tornado.web.RequestHandler):
 #	def get(self):
