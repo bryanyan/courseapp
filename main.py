@@ -58,27 +58,6 @@ class SCSHandler(tornado.web.RequestHandler):
 		scsCoursesSorted = sorted(scsCoursesList,key=lambda x: x[0])
 		return scsCoursesSorted
 
-	#def getSCSFCEs(self):
-	#	scsFCEs = {}
-	#	for i in range(1, len(fce)):
-	#		courseID = str(fce[i]["Course ID"])
-	#		department = str(fce[i]["Dept"])
-	#		year = fce[i]["Year"]
-	#		if department != "CS": continue
-	#		if year < 2011: continue
-	#		if courseID == "": continue
-	#		elif "FA14-" in courseID:
-	#			courseID = courseID.strip("FA14")
-	#			courseID = courseID.strip("-")
-	#		elif "F13-" in courseID: 
-	#			courseID = courseID.strip("F13")
-	#			courseID = courseID.strip("-")
-	#		if courseID in scsFCEs:
-	#			pass
-	#		else:
-	#			scsFCEs[courseID] = []
-	#	return scsFCEs
-
 	def get(self):
 		courses = self.getSCSCourses()
 		self.render('scs.html', courses=courses)
