@@ -86,9 +86,12 @@ class FCEHandler(tornado.web.RequestHandler):
 
 	def parseFCEs(self, course):
 		fces = self.getFCEs()
+
 		calculated = {"Hours Per Week": 0, "Feedback to Students": 0, "Explains Subject Matter": 0, "Overall Teaching": 0, 
-					  "Overall Course": 0, "Responses": 0}
+					  "Overall Course": 0, "Responses": 0, "count": 0}
+
 		courseFCEs = fces[course]
+
 		for i in xrange(len(courseFCEs)):
 			#calculated["Hours Per Week"] += courseFCEs[i]["Questions"]['1: Hrs Per Week 9']
 			calculated["Feedback to Students"] += courseFCEs[i]["Questions"]["5: Feedback to students"]
@@ -96,6 +99,14 @@ class FCEHandler(tornado.web.RequestHandler):
 			calculated["Overall Teaching"] += courseFCEs[i]["Questions"]["9: Overall teaching"]
 			calculated["Overall Course"] += courseFCEs[i]["Questions"]["10: Overall course"]
 			calculated["Responses"] += courseFCEs[i]["Responses"]
+			calculated["count"] += 1
+
+		numInputs = calculated["count"]
+		calculated["Feedback to Students"] = int(round(((float(calculated["Feedback to Students"])/numInputs)/5)*100))
+		calculated["Explains Subject Matter"] = int(round(((float(calculated["Explains Subject Matter"])/numInputs)/5)*100))
+		calculated["Overall Teaching"] = int(round(((float(calculated["Overall Teaching"])/numInputs)/5)*100))
+		calculated["Overall Course"] = int(round(((float(calculated["Overall Course"])/numInputs)/5)*100))
+
 		return calculated
 
 
